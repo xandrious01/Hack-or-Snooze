@@ -59,7 +59,6 @@ function saveUserCredentialsInLocalStorage() {
 }
 
 function updateUIOnUserLogin() {
-
   $allStoriesList.show();
   updateNavOnLogin();
 }

@@ -59,7 +59,6 @@ async function handleBackBtn(e){
 $navFavs.on("click", navFavorites)
 
 function navFavorites(){
-  location.replace(location.href);
   $body.addClass(("on-favs-page"));
   putStoriesOnPage();
 }

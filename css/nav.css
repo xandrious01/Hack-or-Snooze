@@ -4,7 +4,10 @@ nav {
   display: flex;
   background-color: #ff6600;
   align-items: center;
-  padding: 5px 20px;
+  padding-left: 3px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
   border-radius: 3px 3px 0 0;
 }
 
@@ -32,6 +35,16 @@ nav {
   left: 0;
 }
 
-/* .test{
-  color: red;
-} */
+#new-post-btn {
+  background-color: #ff6600;
+  border: 1px solid black;
+  margin-left: 0;
+  margin-right: 10px;
+  height: 20px;
+  font-size: 14px;
+  
+}
+
+#new-post {
+
+}
