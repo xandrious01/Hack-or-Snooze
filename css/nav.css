@@ -1,0 +1,37 @@
+/* Navigation bar */
+
+nav {
+  display: flex;
+  background-color: #ff6600;
+  align-items: center;
+  padding: 5px 20px;
+  border-radius: 3px 3px 0 0;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  display: inline;
+}
+
+.nav-link {
+  font-size: 0.85rem;
+  margin: 0 3px;
+}
+
+.nav-div {
+  padding-left: 5px;
+  position: relative;
+  right: 0;
+  display: inline;
+}
+
+.nav-right {
+  margin-left: auto;
+  text-align: right;
+  display: inline;
+  left: 0;
+}
+
+/* .test{
+  color: red;
+} */
