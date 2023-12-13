@@ -12,12 +12,16 @@ async function getAndShowStoriesOnStart() {
 
 function generateStoryMarkup(story) {
   const hostName = story.getHostName();
-
-  const favStories = localStorage.getObj("favorites");
+  let favStoryIds;
+  if(currentUser) {
+    favStoryIds = (currentUser.favorites).map(s => s.storyId);
+  } else {
+    favStoryIds = null;
+  }
   let favoritesButton;
-  if ((currentUser) && (favStories.indexOf(story.storyId) === -1)) {
+  if ((favStoryIds !== null) && !(favStoryIds.includes(story.storyId))) {
     favoritesButton = `<button class="add-fav-btn" id="fav+${story.storyId}">Add Favorite</button>`;
-  } else if ((currentUser) && (favStories.indexOf(story.storyId) !== -1)) {
+  } else if ((favStoryIds !== null) && favStoryIds.includes(story.storyId)) {
     favoritesButton = `<button class="rem-fav-btn" id="rem+${story.storyId}">Remove Favorite</button>`;
   } else {
     favoritesButton = "";
@@ -37,17 +41,32 @@ function generateStoryMarkup(story) {
 }
 
 function putStoriesOnPage() {
-  if (!($body.hasClass("on-favs-page"))) {
-    storyList = storyList;
-  } else if ($body.hasClass("on-favs-page")) {
-    storyList = StoryList.getFavorites();
-  }
+  
+  storyList = determineStoriesPage();
+
   $allStoriesList.empty();
   for (let story of storyList.stories) {
     const $story = generateStoryMarkup(story);
     $allStoriesList.append($story);
   }
   $allStoriesList.show();
+}
+
+function determineStoriesPage(){
+  switch ($body.attr("class")){
+    case ("on-favs-page"):
+      storyList = StoryList.getFavorites();
+      console.log("favorites")
+    break;
+    case ("on-user-stories-page"):
+      storyList = StoryList.getOwnStories();
+      console.log("own stories")
+    break;
+    default:
+      storyList = storyList;
+      console.log("default")
+  }
+  return storyList;
 }
 
 $('#new-story-form').on("submit", postStory);
@@ -71,32 +90,31 @@ async function postStory(e) {
 $allStoriesList.on("click", ".add-fav-btn", addStoryToFavorites)
 
 async function addStoryToFavorites(e) {
-  const storyId = e.target.id.slice(4);
-  const response = await currentUser.saveToFavorites(storyId);
-  saveFavoritesToLocal(response);
-  toggleButtonClasses(e.target, storyId);
+  let story = extractStory(e);
+  toggleButtonClasses(e.target, story.storyId);
+  await currentUser.addFavorite(story);
 }
 
-$allStoriesList.on("click", ".rem-fav-btn", removeStoryFromFavorites)
+$allStoriesList.on("click", ".rem-fav-btn", removeFromFavorites)
 
-async function removeStoryFromFavorites(e) {
-  const storyId = e.target.id.slice(4);
-  const response = await currentUser.removeFromFavorites(storyId);
-  let favIds = saveFavoritesToLocal(response);
-  if (!($body.hasClass("on-favs-page"))) {
-    toggleButtonClasses(e.target, storyId);
-  } else {
-    $(`#${storyId}`).remove();
+async function removeFromFavorites(e) {
+  let story = extractStory(e);
+  await currentUser.removeFromFavorites(story);
+  if ($body.hasClass("on-favs-page")){
+    let $story = $allStoriesList.find(`#${story.storyId}`);
+    $story.remove()
+  }
+  toggleButtonClasses(e.target, story.storyId);
+  if (currentUser.favorites.length === 0){
+    $favsMessage.show();
   }
 }
 
-function saveFavoritesToLocal(response) {
-  const favIds = response.data.user.favorites.map(i => i.storyId);
-  console.log(favIds)
-  console.log(response.data.user.favorites)
-
-  localStorage.setObj("favorites", [favIds]);
-  return favIds;
+function extractStory(e){
+  const storyId = (e.target.id).slice(4);
+  let filterStory = storyList.stories.filter(i => i.storyId === storyId)
+  let story = filterStory[0];
+  return story;
 }
 
 function toggleButtonClasses(button, storyId){

@@ -1,25 +1,30 @@
 "use strict";
 console.debug("nav.js")
 
-function navAllStories(evt) {
+async function navAllStories(evt) {
   hidePageComponents();
-  if($body.hasClass("on-favs-page")){
+  if ($body.hasClass("on-favs-page") || $body.hasClass("on-user-stories-page")) {
     $body.removeClass("on-favs-page");
-    getAndShowStoriesOnStart();
+    $body.removeClass("on-user-stories-page");
   }
+  $newPostBtn.on("click", showNewPostForm);
+  $navFavs.on("click", navFavorites);
+  $navOwnStories.on("click", navOwnStories);
+  await getAndShowStoriesOnStart();
 }
 
-$body.on("click", "#nav-all", navAllStories);
+$navAll.on("click", navAllStories)
 
 function navLoginClick(evt) {
   hidePageComponents();
+  $loginFavsMsg.hide();
   $loginForm.show();
   $signupForm.show();
 }
 
 $navLogin.on("click", navLoginClick);
 
-function updateNavOnLogin() {
+function updateNavOnLogin(evt) {
   $(".main-nav-links").show();
   $navFavs.show();
   $navLogin.hide();
@@ -41,24 +46,66 @@ function showNewPostForm() {
     $('#new-story-section').toggleClass("hidden");
   } else {
     $allStoriesList.empty();
-      loginComponents.forEach(c => c.show());
-    }
-    $newPostBtn.off("click", showNewPostForm)
-    const $backBtn = $('<button>Go Back</button>');
-    $loginMsg.append($backBtn)
-    $backBtn.on("click", handleBackBtn)
+    hideUserMessages();
+    $loginMsg.show();
+    appendBackBtn($loginMsg); 
   }
-
-async function handleBackBtn(e){
-  e.target.remove();
-  loginComponents.forEach(c => c.hide());
-  await getAndShowStoriesOnStart();
-  $newPostBtn.on("click", showNewPostForm)
 }
 
 $navFavs.on("click", navFavorites)
 
-function navFavorites(){
-  $body.addClass(("on-favs-page"));
-  putStoriesOnPage();
+function navFavorites() {
+
+  if (!(currentUser)) {
+    
+    hidePageComponents();
+    $allStoriesList.empty();
+    $loginFavsMsg.show();
+    appendBackBtn($loginFavsMsg);
+
+  } else if ((currentUser) && (currentUser.favorites.length === 0)) {
+    
+    hidePageComponents();
+    $allStoriesList.empty();
+    $favsMessage.show();
+    appendBackBtn($favsMessage);
+  
+  } else {
+    
+    hidePageComponents();
+    $body.addClass(("on-favs-page"));
+    turnOffFavsBtn();
+    putStoriesOnPage();
+  }
+}
+
+$navOwnStories.on("click", navOwnStories);
+
+async function navOwnStories(){
+  $body.addClass("on-user-stories-page")
+  await getAndShowStoriesOnStart();
+  // hidePageComponents();
+  // hideUserMessages();
+  // $allStoriesList.empty();
+
+}
+
+function appendBackBtn(msg) {
+  const $backBtn = $('<button class="back-btn">Go Back</button>');
+  $backBtn.on("click", handleBackBtn);
+  if (!(msg.children()[1])){
+    msg.append($backBtn);
+  }
+}
+
+async function handleBackBtn(e) {
+  e.target.remove();
+  hidePageComponents();
+  await getAndShowStoriesOnStart();
+  $newPostBtn.on("click", showNewPostForm);
+  $navFavs.on("click", navFavorites);
+}
+
+function turnOffFavsBtn(){
+  !($body.hasClass("on-favs-page")) ? $navFavs.on("click", navFavorites) : $navFavs.off("click", navFavorites);
 }

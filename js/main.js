@@ -13,15 +13,20 @@ const $navLogin = $("#nav-login");
 const $navUserProfile = $("#nav-user-profile");
 const $navLogOut = $("#nav-logout");
 const $navFavs = $("#nav-favs");
+const $navAll = $("#nav-all");
+const $navOwnStories = $("#nav-user-stories");
+
+const $favsMessage = $("#favorites-message");
+const $loginFavsMsg = $("#login-msg-favs");
 
 const $newPostBtn = $('#new-post-btn');
 const $newStoryForm = $('#new-story-form');
 const $loginMsg = $('#login-message');
 
-const loginComponents = [
-        $loginForm,
-        $signupForm,
-        $loginMsg
+const userMessages = [
+        $loginMsg,
+        $loginFavsMsg,
+        $favsMessage
       ];
 
 
@@ -29,10 +34,17 @@ function hidePageComponents() {
   const components = [
     $allStoriesList,
     $loginForm,
-    $signupForm
-    
+    $signupForm,
+    $loginFavsMsg, 
+    $favsMessage,
+    $loginMsg
   ];
   components.forEach(c => c.hide());
+}
+
+function hideUserMessages() {
+  const messages = userMessages;
+  messages.forEach(m => m.hide());
 }
 
 

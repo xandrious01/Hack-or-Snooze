@@ -17,8 +17,8 @@ class Story {
   getHostName() {
     const storyUrl = this.url;
     const splitUrl = storyUrl.toString().split("/");
-    const hostname = splitUrl[2].slice(4);
-    return hostname;
+    const hostname = splitUrl[2];
+    return hostname !== undefined ? hostname : '';
   }
 
 }
@@ -53,7 +53,11 @@ class StoryList {
     }
   
     static getFavorites(){
-      return new StoryList(currentUser.favorites)
+      return new StoryList(currentUser.favorites);
+    }
+
+    static getOwnStories(){
+      return new StoryList(currentUser.ownStories);
     }
 
 }
@@ -156,21 +160,23 @@ class User {
     }
   }
 
-  async saveToFavorites(storyId) {
-    const response = await axios({
-      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
-      method: "POST",
-      data:  { "token" : this.loginToken }
+  async _addOrRemoveFavorite(newState, story) {
+    const method = newState === "add" ? "POST" : "DELETE";
+    const token = this.loginToken;
+    await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: method,
+      data: { token },
     });
-    return response;   
   }
 
-  async removeFromFavorites(storyId) {
-    const response = await axios({
-      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
-      method: "DELETE",
-      data:  { "token" : this.loginToken }
-    });
-    return response;   
+  async addFavorite(story) {
+    this.favorites.push(story);
+    await this._addOrRemoveFavorite("add", story)
+  }
+
+  async removeFromFavorites(story) {
+    this.favorites = this.favorites.filter(s => s.storyId !== story.storyId);
+    await this._addOrRemoveFavorite("remove", story);
   }
 }

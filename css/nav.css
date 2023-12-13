@@ -42,9 +42,9 @@ nav {
   margin-right: 10px;
   height: 20px;
   font-size: 14px;
-  
 }
 
-#new-post {
-
+.back-btn {
+  display: inline-block;
+  font-size: 0.8rem;
 }
