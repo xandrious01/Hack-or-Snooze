@@ -18,15 +18,23 @@ const $navOwnStories = $("#nav-user-stories");
 
 const $favsMessage = $("#favorites-message");
 const $loginFavsMsg = $("#login-msg-favs");
+const $loginMsg = $('#login-message');
+const $noUserStories = $("#no-user-stories-msg");
+const $loginOwnStories = $("#login-own-stories");
 
 const $newPostBtn = $('#new-post-btn');
 const $newStoryForm = $('#new-story-form');
-const $loginMsg = $('#login-message');
+
+
+const $backBtn = $("#back-btn");
 
 const userMessages = [
         $loginMsg,
         $loginFavsMsg,
-        $favsMessage
+        $favsMessage,
+        $noUserStories,
+        $loginOwnStories,
+        $backBtn
       ];
 
 
@@ -35,9 +43,6 @@ function hidePageComponents() {
     $allStoriesList,
     $loginForm,
     $signupForm,
-    $loginFavsMsg, 
-    $favsMessage,
-    $loginMsg
   ];
   components.forEach(c => c.hide());
 }
@@ -49,7 +54,7 @@ function hideUserMessages() {
 
 
 async function start() {
-
+  $backBtn.hide();
   await checkForRememberedUser();
   await getAndShowStoriesOnStart();
   

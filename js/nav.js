@@ -3,13 +3,9 @@ console.debug("nav.js")
 
 async function navAllStories(evt) {
   hidePageComponents();
-  if ($body.hasClass("on-favs-page") || $body.hasClass("on-user-stories-page")) {
-    $body.removeClass("on-favs-page");
-    $body.removeClass("on-user-stories-page");
-  }
+  hideUserMessages();
+  $body.removeClass();
   $newPostBtn.on("click", showNewPostForm);
-  $navFavs.on("click", navFavorites);
-  $navOwnStories.on("click", navOwnStories);
   await getAndShowStoriesOnStart();
 }
 
@@ -17,7 +13,7 @@ $navAll.on("click", navAllStories)
 
 function navLoginClick(evt) {
   hidePageComponents();
-  $loginFavsMsg.hide();
+  hideUserMessages();
   $loginForm.show();
   $signupForm.show();
 }
@@ -42,70 +38,77 @@ $newPostBtn.on("click", showNewPostForm)
 
 function showNewPostForm() {
   const token = localStorage.getItem("token") ? localStorage.getItem("token") : null;
+  $loginForm.hide();
+  $signupForm.hide();
+  hideUserMessages();
   if (token) {
-    $('#new-story-section').toggleClass("hidden");
+    $("#new-story-section").show();
   } else {
     $allStoriesList.empty();
-    hideUserMessages();
     $loginMsg.show();
-    appendBackBtn($loginMsg); 
+    $backBtn.show();
   }
 }
 
 $navFavs.on("click", navFavorites)
 
-function navFavorites() {
+async function navFavorites() {
+  $body.removeClass();
+  hidePageComponents();
+  hideUserMessages();
+  $("#new-story-section").hide();
+  if (checkForUserAndFavs()!==false) {
+    $body.addClass("on-favs-page");
+    await getAndShowStoriesOnStart();
+  }  
+}
 
+function checkForUserAndFavs() {
+  $allStoriesList.empty();
   if (!(currentUser)) {
-    
-    hidePageComponents();
-    $allStoriesList.empty();
     $loginFavsMsg.show();
-    appendBackBtn($loginFavsMsg);
-
-  } else if ((currentUser) && (currentUser.favorites.length === 0)) {
-    
-    hidePageComponents();
-    $allStoriesList.empty();
+    $backBtn.show();
+    return false;
+  } else if ((currentUser.favorites.length === 0)) {
     $favsMessage.show();
-    appendBackBtn($favsMessage);
-  
-  } else {
-    
-    hidePageComponents();
-    $body.addClass(("on-favs-page"));
-    turnOffFavsBtn();
-    putStoriesOnPage();
+    $backBtn.show();
+    return false;
   }
+  
 }
 
 $navOwnStories.on("click", navOwnStories);
 
-async function navOwnStories(){
-  $body.addClass("on-user-stories-page")
-  await getAndShowStoriesOnStart();
-  // hidePageComponents();
-  // hideUserMessages();
-  // $allStoriesList.empty();
-
+async function navOwnStories() {
+  $body.removeClass();
+  hidePageComponents();
+  hideUserMessages();
+  $("#new-story-section").hide();
+  if (checkForUserAndOwnStories()!==false) {
+    $body.addClass("on-user-stories-page");
+    await getAndShowStoriesOnStart();
+  } 
 }
 
-function appendBackBtn(msg) {
-  const $backBtn = $('<button class="back-btn">Go Back</button>');
-  $backBtn.on("click", handleBackBtn);
-  if (!(msg.children()[1])){
-    msg.append($backBtn);
+function checkForUserAndOwnStories() {
+  $allStoriesList.empty();
+  if (!(currentUser)) {
+    $loginOwnStories.show();
+    $backBtn.show();
+    return false;
+  } else if ((currentUser.ownStories.length === 0)) {
+    $noUserStories.show();
+    $backBtn.show();
+    return false;
   }
 }
 
-async function handleBackBtn(e) {
-  e.target.remove();
-  hidePageComponents();
-  await getAndShowStoriesOnStart();
-  $newPostBtn.on("click", showNewPostForm);
-  $navFavs.on("click", navFavorites);
-}
+$backBtn.on("click", handleBackBtn);
 
-function turnOffFavsBtn(){
-  !($body.hasClass("on-favs-page")) ? $navFavs.on("click", navFavorites) : $navFavs.off("click", navFavorites);
+async function handleBackBtn(e) {
+  $backBtn.hide();
+  hidePageComponents();
+  hideUserMessages();
+  $body.removeClass();
+  await getAndShowStoriesOnStart();
 }

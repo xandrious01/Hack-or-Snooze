@@ -78,12 +78,10 @@ async function postStory(e) {
     "title": $('#story-title').val(),
     "url": $('#story-url').val()
   }
-  const token = localStorage.getItem("token");
-  let newStory = await storyList.addStory(token, storyData);
+  let newStory = await currentUser.addStory(storyData);
   let $newStory = generateStoryMarkup(newStory);
   $allStoriesList.prepend($newStory);
   $newStoryForm.trigger("reset");
-  $newStoryForm.hide();
   return newStory;
 }
 

@@ -58,7 +58,9 @@ function saveUserCredentialsInLocalStorage() {
   }
 }
 
-function updateUIOnUserLogin() {
+async function updateUIOnUserLogin() {
+  hidePageComponents();
+  hideUserMessages();
   $allStoriesList.show();
   updateNavOnLogin();
 }
