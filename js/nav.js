@@ -1,5 +1,4 @@
 "use strict";
-console.debug("nav.js")
 
 async function navAllStories(evt) {
   hidePageComponents();

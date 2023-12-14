@@ -1,7 +1,6 @@
 "use strict";
 
 let storyList;
-console.debug("stories.js")
 
 async function getAndShowStoriesOnStart() {
   storyList = await StoryList.getStories();
@@ -56,15 +55,12 @@ function determineStoriesPage(){
   switch ($body.attr("class")){
     case ("on-favs-page"):
       storyList = StoryList.getFavorites();
-      console.log("favorites")
     break;
     case ("on-user-stories-page"):
       storyList = StoryList.getOwnStories();
-      console.log("own stories")
     break;
     default:
       storyList = storyList;
-      console.log("default")
   }
   return storyList;
 }

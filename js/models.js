@@ -1,5 +1,4 @@
 "use strict";
-console.debug("models.js")
 
 const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
 
@@ -41,7 +40,6 @@ class StoryList {
   }
 
     addStory(response) {
-      console.log(response)
       const story = new Story(response.data.story);
       this.stories.unshift(story);
       return story;

@@ -1,5 +1,4 @@
 "use strict";
-console.debug("user.js")
 let currentUser;
 
 async function login(evt) {
@@ -9,7 +8,6 @@ async function login(evt) {
   const password = $("#login-password").val();
 
   currentUser = await User.login(username, password);
-  console.log(currentUser.favorites)
   $loginForm.trigger("reset");
 
   saveUserCredentialsInLocalStorage();

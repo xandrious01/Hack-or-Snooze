@@ -1,5 +1,4 @@
 "use strict";
-console.debug("main.js")
 
 const $body = $("body");
 
